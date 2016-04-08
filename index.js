@@ -252,22 +252,3 @@ $.fn.laserCarousel.defaults = {
     speed: 300,
     dots: true
 };
-
-$('.carousel').carousel({
-    itemWidth: 100,
-    initialSlide: 2,
-    itemNavigation: true,
-    currentItemSpacing: .5,
-    touch: true,
-    speed: 300,
-    responsive: {
-        650: {
-            itemWidth: 130,
-            currentItemSpacing: 1
-        },
-        900: {
-            itemWidth: 130,
-            currentItemSpacing: 1.5
-        }
-    }
-});
