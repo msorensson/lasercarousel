@@ -1,7 +1,7 @@
 {
   "name": "lasercarousel",
   "version": "1.0.0",
-  "description": "Lasercarousel =============",
+  "description": "Lasercarousel",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,8 +16,10 @@
     "url": "https://github.com/msorensson/lasercarousel/issues"
   },
   "homepage": "https://github.com/msorensson/lasercarousel#readme",
+  "peerDependencies": {
+    "jquery": "^2.2.3"
+  },
   "dependencies": {
-    "jquery": "^2.2.3",
     "lodash": "^4.8.2"
   }
 }
