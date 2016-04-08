@@ -4,7 +4,7 @@ var $ = require('jquery');
 var $window = $(window);
 var debounce = require('lodash/debounce');
 
-function Carousel(el, opts) {
+function LaserCarousel(el, opts) {
     var self = this;
 
     self.$el = $(el);
@@ -24,7 +24,7 @@ function Carousel(el, opts) {
     self.initialize();
 }
 
-Carousel.prototype = {
+LaserCarousel.prototype = {
     swipe: require('./swipe'),
 
     applyTrackTransition: function() {
@@ -235,15 +235,15 @@ Carousel.prototype = {
     }
 };
 
-$.fn.carousel = function(options) {
-    var opts = $.extend({}, $.fn.carousel.defaults, options);
+$.fn.laserCarousel = function(options) {
+    var opts = $.extend({}, $.fn.laserCarousel.defaults, options);
 
     return this.each(function() {
-        var carousel = new Carousel(this, opts);
+        var laserCarousel = new LaserCarousel(this, opts);
     });
 };
 
-$.fn.carousel.defaults = {
+$.fn.laserCarousel.defaults = {
     itemWidth: 130,
     initialSlide: 0,
     itemNavigation: true,
