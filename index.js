@@ -10,6 +10,7 @@ function LaserCarousel(el, opts) {
 
     self.opts = {
         itemWidth: '100px',
+        namespace: '',
         initialSlide: 0,
         itemNavigation: true,
         currentItemSpacing: 1,
@@ -41,7 +42,7 @@ LaserCarousel.prototype = {
 
     storeItems: function() {
         var self = this,
-            items = self.el.getElementsByClassName('lasercarousel__item'),
+            items = self.el.getElementsByClassName(self.opts.namespace + 'carousel__item'),
             i = items.length - 1;
 
         for (i; i >= 0; i--) {
@@ -72,7 +73,7 @@ LaserCarousel.prototype = {
             items = self.items;
 
         self.track = document.createElement('div');
-        self.track.classList.add('lasercarousel__track');
+        self.track.classList.add(self.opts.namespace + 'lasercarousel__track');
         self.el.insertBefore(self.track, self.el.firstChild);
 
         for (i = 0; i < self.items.length; i++) {
@@ -94,11 +95,11 @@ LaserCarousel.prototype = {
             html = '';
 
         self.carouselNavigation = document.createElement('ul');
-        self.carouselNavigation.classList.add('lasercarousel__navigation');
+        self.carouselNavigation.classList.add(self.opts.namespace + 'carousel__navigation');
         self.el.appendChild(self.carouselNavigation);
 
         for (var i = 0; i < self.items.length; i++) {
-            html += '<li class="lasercarousel__navigation-item"><a role="button" href="#" class="lasercarousel__navigation-button">' + (i + 1) + '</a></li>\n';
+            html += '<li class="' + self.opts.namespace + 'carousel__navigation-item"><a role="button" href="#" class="' + self.opts.namespace + 'carousel__navigation-button">' + (i + 1) + '</a></li>\n';
         }
 
         self.carouselNavigation.innerHTML = html;
@@ -110,27 +111,27 @@ LaserCarousel.prototype = {
             current;
 
         if (self.currentItem) {
-            self.currentItem.classList.remove('carousel__item--current');
+            self.currentItem.classList.remove(self.opts.namespace + 'carousel__item--current');
         }
 
         self.currentItem = self.items[idx].el;
 
         if (self.currentItem) {
             self.currentItemIdx = idx;
-            self.currentItem.classList.add('carousel__item--current');
+            self.currentItem.classList.add(self.opts.namespace + 'carousel__item--current');
         }
 
         if (self.carouselNavigation) {
-            current = self.carouselNavigation.getElementsByClassName('lasercarousel__navigation-item--current')[0];
+            current = self.carouselNavigation.getElementsByClassName(self.opts.namespace + 'carousel__navigation-item--current')[0];
 
             if (current) {
-                current.classList.remove('lasercarousel__navigation-item--current');
+                current.classList.remove(self.opts.namespace + 'carousel__navigation-item--current');
             }
 
-            items = self.carouselNavigation.getElementsByClassName('lasercarousel__navigation-item');
+            items = self.carouselNavigation.getElementsByClassName(self.opts.namespace + 'carousel__navigation-item');
 
             if (items[idx]) {
-                items[idx].classList.add('lasercarousel__navigation-item--current');
+                items[idx].classList.add(self.opts.namespace + 'carousel__navigation-item--current');
             }
         }
     },
@@ -185,7 +186,7 @@ LaserCarousel.prototype = {
 
     attachNavigationHandler: function() {
         var self = this;
-        var items = self.el.getElementsByClassName('lasercarousel__navigation-item');
+        var items = self.el.getElementsByClassName(self.opts.namespace + 'carousel__navigation-item');
 
         var attachClickHandler = function(el, idx) {
             el.addEventListener('click', function(e) {
