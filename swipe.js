@@ -52,7 +52,7 @@ module.exports = function() {
 
         self.applyTrackTransition();
 
-        if (distance > self.el.offsetWidth / 2) {
+        if (distance > self.el.offsetWidth / 4) {
             if (direction === 'right') {
                 self.next();
             } else {
