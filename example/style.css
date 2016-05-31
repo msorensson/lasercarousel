@@ -1,0 +1,135 @@
+body {
+    width: 100%;
+    overflow-x: hidden;
+    padding: 0;
+    margin: 0;
+}
+
+.lasercarousel {
+    position: relative;
+    transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    margin-right: -2%;
+}
+
+.lasercarousel__track {
+    position: absolute;
+    top: 0px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: transform 300ms;
+    transition-timing-function: ease-out;
+    z-index: 1;
+    backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    will-change: transform;
+}
+
+.lasercarousel__item {
+    position: absolute;
+    left: 0;
+    top: 0;
+    text-align: center;
+    transform: translate3d(0, 0, 0);
+    width: 100%;
+    height: 100%;
+    transition: transform 300ms;
+    cursor: pointer;
+    backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    will-change: transform;
+    display: none;
+}
+
+.lasercarousel__item:first-child {
+    display: block;
+}
+
+.carousel__image {
+    display: inline;
+    transform: scale(.8, .8);
+    transition: transform 300ms;
+    user-select: none;
+    pointer-events: none;
+    will-change: transform;
+    width: 100px;
+}
+
+.carousel__item--current .carousel__image {
+    transform: scale(1.7, 1.7);
+}
+
+.carousel__text {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: block;
+    opacity: 0;
+    transition: opacity 100ms;
+    font-size: 16px;
+    user-select: none;
+}
+
+.carousel__item--current .carousel__text {
+    opacity: 1;
+    transition-duration: 300ms;
+}
+
+.lasercarousel__navigation {
+    text-align: center;
+    bottom: -40px;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+    margin: 0;
+    padding: 0;
+}
+
+.lasercarousel__navigation-item {
+    display: inline-block;
+    margin-right: -.25em;
+}
+
+.lasercarousel__navigation-button {
+    display: block;
+    width: 9px;
+    height: 9px;
+    margin: 0 4px;
+    border: 1px solid $white;
+    border-radius: 100%;
+    color: black;
+    transition: background 200ms, transform 50ms;
+}
+
+.carousel__navigation-item--current .carousel__navigation-button {
+    background: #fff;
+}
+
+/* Custom */
+.content {
+    width: 96%;
+    margin: 0 auto;
+    max-width: 1000px;
+}
+
+.lasercarousel:after {
+    content: ' ';
+    display: block;
+    padding-top: 56.25%;
+}
+
+.lasercarousel__item-content {
+    position: absolute;
+    left: 0;
+    right: 2%;
+    bottom: 0;
+    top: 0;
+    background: black;
+    color: white;
+}
