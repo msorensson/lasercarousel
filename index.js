@@ -264,7 +264,9 @@ LaserCarousel.prototype = {
     }
 };
 
-var el = document.getElementsByClassName('lasercarousel')[0];
-if (el) {
-    new LaserCarousel(el);
+
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+    module.exports = LaserCarousel;
+} else {
+    window.LaserCarousel = LaserCarousel;
 }
