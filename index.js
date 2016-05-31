@@ -272,6 +272,3 @@ if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
 } else {
     window.LaserCarousel = LaserCarousel;
 }
-
-var el = document.getElementsByClassName('lasercarousel')[0];
-new LaserCarousel(el);
