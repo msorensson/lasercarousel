@@ -1,5 +1,6 @@
 'use strict';
 /* global window */
+require('classlist-polyfill');
 var debounce = require('lodash/debounce');
 var assign = require('lodash/assign');
 
