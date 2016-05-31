@@ -200,6 +200,10 @@ LaserCarousel.prototype = {
 
         for (var i = 0; i < items.length; i++) {
             attachClickHandler(items[i], i);
+
+            if (self.opts.itemNavigation) {
+                attachClickHandler(self.items[i].el, i);
+            }
         }
     },
 
