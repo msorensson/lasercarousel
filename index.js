@@ -6,7 +6,7 @@ var assign = require('lodash/assign');
 function LaserCarousel(el, opts) {
     var self = this;
 
-    self.el = el;
+    self.el = el.children[0];
 
     self.opts = {
         itemWidth: '100px',
@@ -41,11 +41,13 @@ LaserCarousel.prototype = {
 
     storeItems: function() {
         var self = this,
-            items = self.el.getElementsByClassName('lasercarousel__item');
+            items = self.el.getElementsByClassName('lasercarousel__item'),
+            i = items.length - 1;
 
-        for (var i = 0; i < items.length; i++) {
+        for (i; i >= 0; i--) {
             self.items[i] = {};
             self.items[i].el = items[i].cloneNode(true);
+            self.el.removeChild(items[i]);
         }
     },
 
@@ -69,8 +71,9 @@ LaserCarousel.prototype = {
             i,
             items = self.items;
 
-        self.el.innerHTML = '<div class="lasercarousel__track"></div>';
-        self.track = self.el.querySelector('.lasercarousel__track');
+        self.track = document.createElement('div');
+        self.track.classList.add('lasercarousel__track');
+        self.el.insertBefore(self.track, self.el.firstChild);
 
         for (i = 0; i < self.items.length; i++) {
             self.track.appendChild(self.items[i].el);
@@ -264,9 +267,11 @@ LaserCarousel.prototype = {
     }
 };
 
-
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     module.exports = LaserCarousel;
 } else {
     window.LaserCarousel = LaserCarousel;
 }
+
+var el = document.getElementsByClassName('lasercarousel')[0];
+new LaserCarousel(el);
