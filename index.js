@@ -73,7 +73,7 @@ LaserCarousel.prototype = {
             items = self.items;
 
         self.track = document.createElement('div');
-        self.track.classList.add(self.opts.namespace + 'lasercarousel__track');
+        self.track.classList.add(self.opts.namespace + 'carousel__track');
         self.el.insertBefore(self.track, self.el.firstChild);
 
         for (i = 0; i < self.items.length; i++) {
