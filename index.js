@@ -1,24 +1,36 @@
 'use strict';
 /* global window */
-var $ = require('jquery');
-var $window = $(window);
 var debounce = require('lodash/debounce');
+var assign = require('lodash/assign');
 
 function LaserCarousel(el, opts) {
     var self = this;
 
-    self.$el = $(el);
-    self.opts = opts;
+    self.el = el;
+
+    self.opts = {
+        itemWidth: '100px',
+        initialSlide: 0,
+        itemNavigation: true,
+        currentItemSpacing: 1,
+        touch: true,
+        speed: 300,
+        dots: true
+    };
+
+    assign(self.opts, opts);
+
     self.currentItemIdx = self.opts.initialSlide;
 
-    self.$items = $('.carousel__item', self.$el);
-    self.itemCount = self.$items.length;
+    self.items = [];
+    self.storeItems();
+    self.itemCount = self.items.length;
 
     self.currentX = 0;
     self.trackWidth = 0;
     self.dragging = false;
-    self.settings = {};
 
+    self.settings = {};
     self.initialised = false;
 
     self.initialize();
@@ -27,100 +39,118 @@ function LaserCarousel(el, opts) {
 LaserCarousel.prototype = {
     swipe: require('./swipe'),
 
+    storeItems: function() {
+        var self = this,
+            items = self.el.getElementsByClassName('lasercarousel__item');
+
+        for (var i = 0; i < items.length; i++) {
+            self.items[i] = {};
+            self.items[i].el = items[i].cloneNode(true);
+        }
+    },
+
     applyTrackTransition: function() {
         var self = this;
-
-        self.$carouselTrack.css({
-            'transition-property': 'transform',
-            'transition-duration': self.settings.speed + 'ms'
-        });
+        self.track.style.transitionProperty = 'transform';
+        self.track.style.transitionDuration = self.opts.speed + 'ms';
     },
 
     panToCurrent: function() {
         var self = this,
-            idx = self.currentItemIdx + 1;
+            idx = self.currentItemIdx,
+            itemWidth = self.el.offsetWidth;
 
-        self.currentX = -(idx + self.settings.currentItemSpacing) * self.settings.itemWidth + (self.settings.itemWidth / 2);
-
-        self.$carouselTrack.css({
-            transform: 'translate3d(' + self.currentX + 'px, 0 ,0)'
-        });
+        self.currentX = -idx * itemWidth;
+        self.track.style.transform = 'translate3d(' + self.currentX + 'px, 0 ,0)';
     },
 
     addTrack: function() {
-        var self = this;
-        $('.carousel__item', self.$el).wrapAll('<div class="carousel__track" />');
-        self.$carouselTrack = $('.carousel__track', self.$el);
+        var self = this,
+            i,
+            items = self.items;
+
+        self.el.innerHTML = '<div class="lasercarousel__track"></div>';
+        self.track = self.el.querySelector('.lasercarousel__track');
+
+        for (i = 0; i < self.items.length; i++) {
+            self.track.appendChild(self.items[i].el);
+        }
     },
 
     setTrackWidth: function() {
         var self = this;
-        self.trackWidth = self.settings.itemWidth * (self.itemCount + (self.settings.currentItemSpacing * 2));
-        self.$carouselTrack.width(self.trackWidth);
+        var itemWidth = self.el.offsetWidth;
+        itemWidth = parseInt(itemWidth);
+
+        self.trackWidth = itemWidth * self.items.length;
+        self.track.style.width = self.trackWidth + 'px';
     },
 
     addDots: function() {
         var self = this,
             html = '';
 
-        self.$carouselNavigation = $('<ul class="carousel__navigation" />');
+        self.carouselNavigation = document.createElement('ul');
+        self.carouselNavigation.classList.add('lasercarousel__navigation');
+        self.el.appendChild(self.carouselNavigation);
 
-        for (var i = 0; i < self.itemCount; i++) {
-            html += '<li class="carousel__navigation-item"><a href="#" class="carousel__navigation-button">' + i + 1 + '</a></li>\n';
+        for (var i = 0; i < self.items.length; i++) {
+            html += '<li class="lasercarousel__navigation-item"><a role="button" href="#" class="lasercarousel__navigation-button">' + (i + 1) + '</a></li>\n';
         }
 
-        self.$carouselNavigation.html(html);
-
-        self.$el.append(self.$carouselNavigation);
+        self.carouselNavigation.innerHTML = html;
     },
 
     setCurrent: function(idx) {
-        var self = this;
+        var self = this,
+            items,
+            current;
 
-        if (self.$currentItem) {
-            self.$currentItem.removeClass('carousel__item--current');
+        if (self.currentItem) {
+            self.currentItem.classList.remove('carousel__item--current');
         }
 
-        self.$currentItem = $('.carousel__item', self.$el).eq(idx);
+        self.currentItem = self.items[idx].el;
 
-        if (self.$currentItem) {
+        if (self.currentItem) {
             self.currentItemIdx = idx;
-            self.$currentItem.addClass('carousel__item--current');
+            self.currentItem.classList.add('carousel__item--current');
         }
 
-        if (self.$carouselNavigation) {
-            $('.carousel__navigation-item--current', self.$carouselNavigation)
-                .removeClass('carousel__navigation-item--current');
+        if (self.carouselNavigation) {
+            current = self.carouselNavigation.getElementsByClassName('lasercarousel__navigation-item--current')[0];
 
-            $('.carousel__navigation-item', self.$carouselNavigation)
-                .eq(idx)
-                .addClass('carousel__navigation-item--current');
+            if (current) {
+                current.classList.remove('lasercarousel__navigation-item--current');
+            }
+
+            items = self.carouselNavigation.getElementsByClassName('lasercarousel__navigation-item');
+
+            if (items[idx]) {
+                items[idx].classList.add('lasercarousel__navigation-item--current');
+            }
         }
     },
 
     positionItems: function() {
         var self = this;
         var idx = 0;
+        var current;
+        var isCurrent = false;
 
-        self.$items.each(function() {
-            var $this = $(this);
-            var isCurrent = false;
+        for (var i = 0; i < self.items.length; i++) {
+            current = self.items[i].el;
+            isCurrent = false;
 
-            if (self.$currentItem && $this[0] === self.$currentItem[0]) {
+            if (self.currentItem && current === self.currentItem) {
                 isCurrent = true;
-                idx = idx + self.settings.currentItemSpacing;
+                idx = idx + self.opts.currentItemSpacing;
             }
 
-            $this.css({
-                transform: 'translate3d(' + idx * 100 + '%, -50%, 0)'
-            });
-
-            if (isCurrent) {
-                idx = idx + self.settings.currentItemSpacing;
-            }
-
-            idx++;
-        });
+            current.style.width = self.el.offsetWidth + 'px';
+            current.style.transform = 'translate3d(' + (i * 100) + '%, 0%, 0)';
+            current.style.display = 'block';
+        }
     },
 
     goto: function(idx) {
@@ -152,21 +182,21 @@ LaserCarousel.prototype = {
 
     attachNavigationHandler: function() {
         var self = this;
-        var selector = '.carousel__navigation-item';
+        var items = self.el.getElementsByClassName('lasercarousel__navigation-item');
 
-        if (self.opts.itemNavigation) {
-            selector += ', .carousel__item';
+        var attachClickHandler = function(el, idx) {
+            el.addEventListener('click', function(e) {
+                if (!self.dragging) {
+                    self.goto(idx);
+                }
+
+                e.preventDefault();
+            });
+        };
+
+        for (var i = 0; i < items.length; i++) {
+            attachClickHandler(items[i], i);
         }
-
-        $(selector, self.$el).on('click', function(e) {
-            var idx = $(e.currentTarget).index();
-
-            if (!self.dragging) {
-                self.goto(idx);
-            }
-
-            e.preventDefault();
-        });
     },
 
     settingsFromBreakpoint: function(breakpoint) {
@@ -180,7 +210,7 @@ LaserCarousel.prototype = {
 
     settingsByScreenSize: function() {
         var self = this,
-            wWidth = $window.width(),
+            wWidth = window.offsetWidth,
             breakpointToUse = false;
 
         // Reset to defaults.
@@ -205,7 +235,6 @@ LaserCarousel.prototype = {
     start: function() {
         var self = this;
 
-        self.settingsByScreenSize();
         self.setTrackWidth();
         self.setCurrent(self.currentItemIdx);
         self.positionItems();
@@ -219,7 +248,7 @@ LaserCarousel.prototype = {
 
         self.addTrack();
 
-        $window.on('resize', debounce($.proxy(self.start, self), 300));
+        window.addEventListener('resize', debounce(self.start.bind(self), 300));
 
         if (self.opts.dots) {
             self.addDots();
@@ -235,20 +264,7 @@ LaserCarousel.prototype = {
     }
 };
 
-$.fn.laserCarousel = function(options) {
-    var opts = $.extend({}, $.fn.laserCarousel.defaults, options);
-
-    return this.each(function() {
-        var laserCarousel = new LaserCarousel(this, opts);
-    });
-};
-
-$.fn.laserCarousel.defaults = {
-    itemWidth: 130,
-    initialSlide: 0,
-    itemNavigation: true,
-    currentItemSpacing: 1,
-    touch: true,
-    speed: 300,
-    dots: true
-};
+var el = document.getElementsByClassName('lasercarousel')[0];
+if (el) {
+    new LaserCarousel(el);
+}

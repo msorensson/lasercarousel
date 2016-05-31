@@ -1,6 +1,4 @@
 'use strict';
-/* global document */
-
 module.exports = function() {
     var self = this,
         pressed = false,
@@ -15,9 +13,7 @@ module.exports = function() {
         lastX = getPositionX(e),
         lastY = getPositionY(e);
 
-        self.$carouselTrack.css({
-            'transition-property': 'none'
-        });
+        self.track.style.transitionProperty = 'none';
     }
 
     function drag(e) {
@@ -56,7 +52,7 @@ module.exports = function() {
 
         self.applyTrackTransition();
 
-        if (distance > (self.opts.itemWidth / 2)) {
+        if (distance > self.el.offsetWidth / 2) {
             if (direction === 'right') {
                 self.next();
             } else {
@@ -94,16 +90,14 @@ module.exports = function() {
     function scroll(delta) {
         self.currentX = self.currentX + delta;
 
-        self.$carouselTrack.css({
-            'transform': 'translate3d(' + self.currentX + 'px, 0, 0)'
-        });
+        self.track.style.transform = 'translate3d(' + self.currentX + 'px, 0, 0)';
     }
 
-    self.$el[0].addEventListener('mousedown', tap);
-    self.$el[0].addEventListener('mousemove', drag);
+    self.el.addEventListener('mousedown', tap);
+    self.el.addEventListener('mousemove', drag);
     document.addEventListener('mouseup', release);
 
-    self.$el[0].addEventListener('touchstart', tap);
-    self.$el[0].addEventListener('touchmove', drag);
+    self.el.addEventListener('touchstart', tap);
+    self.el.addEventListener('touchmove', drag);
     document.addEventListener('touchend', release);
 };
