@@ -50,7 +50,7 @@ body {
     display: block;
 }
 
-.carousel__image {
+.lasercarousel__image {
     display: inline;
     transform: scale(.8, .8);
     transition: transform 300ms;
@@ -60,7 +60,7 @@ body {
     width: 100px;
 }
 
-.carousel__item--current .carousel__image {
+.lasercarousel__item--current .lasercarousel__image {
     transform: scale(1.7, 1.7);
 }
 
@@ -76,7 +76,7 @@ body {
     user-select: none;
 }
 
-.carousel__item--current .carousel__text {
+.lasercarousel__item--current .carousel__text {
     opacity: 1;
     transition-duration: 300ms;
 }
@@ -107,7 +107,7 @@ body {
     transition: background 200ms, transform 50ms;
 }
 
-.carousel__navigation-item--current .carousel__navigation-button {
+.lasercarousel__navigation-item--current .lasercarousel__navigation-button {
     background: #fff;
 }
 

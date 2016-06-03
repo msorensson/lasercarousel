@@ -46,16 +46,18 @@
 
 	'use strict';
 	/* global window */
+	__webpack_require__(35);
 	var debounce = __webpack_require__(1);
 	var assign = __webpack_require__(8);
 
 	function LaserCarousel(el, opts) {
 	    var self = this;
 
-	    self.el = el;
+	    self.el = el.children[0];
 
 	    self.opts = {
 	        itemWidth: '100px',
+	        namespace: '',
 	        initialSlide: 0,
 	        itemNavigation: true,
 	        currentItemSpacing: 1,
@@ -87,11 +89,13 @@
 
 	    storeItems: function() {
 	        var self = this,
-	            items = self.el.getElementsByClassName('lasercarousel__item');
+	            items = self.el.getElementsByClassName(self.opts.namespace + 'carousel__item'),
+	            i = items.length - 1;
 
-	        for (var i = 0; i < items.length; i++) {
+	        for (i; i >= 0; i--) {
 	            self.items[i] = {};
 	            self.items[i].el = items[i].cloneNode(true);
+	            self.el.removeChild(items[i]);
 	        }
 	    },
 
@@ -115,8 +119,9 @@
 	            i,
 	            items = self.items;
 
-	        self.el.innerHTML = '<div class="lasercarousel__track"></div>';
-	        self.track = self.el.querySelector('.lasercarousel__track');
+	        self.track = document.createElement('div');
+	        self.track.classList.add(self.opts.namespace + 'carousel__track');
+	        self.el.insertBefore(self.track, self.el.firstChild);
 
 	        for (i = 0; i < self.items.length; i++) {
 	            self.track.appendChild(self.items[i].el);
@@ -137,11 +142,11 @@
 	            html = '';
 
 	        self.carouselNavigation = document.createElement('ul');
-	        self.carouselNavigation.classList.add('lasercarousel__navigation');
+	        self.carouselNavigation.classList.add(self.opts.namespace + 'carousel__navigation');
 	        self.el.appendChild(self.carouselNavigation);
 
 	        for (var i = 0; i < self.items.length; i++) {
-	            html += '<li class="lasercarousel__navigation-item"><a role="button" href="#" class="lasercarousel__navigation-button">' + (i + 1) + '</a></li>\n';
+	            html += '<li class="' + self.opts.namespace + 'carousel__navigation-item"><a role="button" href="#" class="' + self.opts.namespace + 'carousel__navigation-button">' + (i + 1) + '</a></li>\n';
 	        }
 
 	        self.carouselNavigation.innerHTML = html;
@@ -153,27 +158,27 @@
 	            current;
 
 	        if (self.currentItem) {
-	            self.currentItem.classList.remove('carousel__item--current');
+	            self.currentItem.classList.remove(self.opts.namespace + 'carousel__item--current');
 	        }
 
 	        self.currentItem = self.items[idx].el;
 
 	        if (self.currentItem) {
 	            self.currentItemIdx = idx;
-	            self.currentItem.classList.add('carousel__item--current');
+	            self.currentItem.classList.add(self.opts.namespace + 'carousel__item--current');
 	        }
 
 	        if (self.carouselNavigation) {
-	            current = self.carouselNavigation.getElementsByClassName('lasercarousel__navigation-item--current')[0];
+	            current = self.carouselNavigation.getElementsByClassName(self.opts.namespace + 'carousel__navigation-item--current')[0];
 
 	            if (current) {
-	                current.classList.remove('lasercarousel__navigation-item--current');
+	                current.classList.remove(self.opts.namespace + 'carousel__navigation-item--current');
 	            }
 
-	            items = self.carouselNavigation.getElementsByClassName('lasercarousel__navigation-item');
+	            items = self.carouselNavigation.getElementsByClassName(self.opts.namespace + 'carousel__navigation-item');
 
 	            if (items[idx]) {
-	                items[idx].classList.add('lasercarousel__navigation-item--current');
+	                items[idx].classList.add(self.opts.namespace + 'carousel__navigation-item--current');
 	            }
 	        }
 	    },
@@ -228,7 +233,7 @@
 
 	    attachNavigationHandler: function() {
 	        var self = this;
-	        var items = self.el.getElementsByClassName('lasercarousel__navigation-item');
+	        var items = self.el.getElementsByClassName(self.opts.namespace + 'carousel__navigation-item');
 
 	        var attachClickHandler = function(el, idx) {
 	            el.addEventListener('click', function(e) {
@@ -242,6 +247,10 @@
 
 	        for (var i = 0; i < items.length; i++) {
 	            attachClickHandler(items[i], i);
+
+	            if (self.opts.itemNavigation) {
+	                attachClickHandler(self.items[i].el, i);
+	            }
 	        }
 	    },
 
@@ -310,9 +319,10 @@
 	    }
 	};
 
-	var el = document.getElementsByClassName('lasercarousel')[0];
-	if (el) {
-	    new LaserCarousel(el);
+	if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+	    module.exports = LaserCarousel;
+	} else {
+	    window.LaserCarousel = LaserCarousel;
 	}
 
 
@@ -1796,7 +1806,7 @@
 
 	        self.applyTrackTransition();
 
-	        if (distance > self.el.offsetWidth / 2) {
+	        if (distance > self.el.offsetWidth / 4) {
 	            if (direction === 'right') {
 	                self.next();
 	            } else {
@@ -1845,6 +1855,253 @@
 	    self.el.addEventListener('touchmove', drag);
 	    document.addEventListener('touchend', release);
 	};
+
+
+/***/ },
+/* 35 */
+/***/ function(module, exports) {
+
+	/*
+	 * classList.js: Cross-browser full element.classList implementation.
+	 * 2014-07-23
+	 *
+	 * By Eli Grey, http://eligrey.com
+	 * Public Domain.
+	 * NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
+	 */
+
+	/*global self, document, DOMException */
+
+	/*! @source http://purl.eligrey.com/github/classList.js/blob/master/classList.js*/
+
+	/* Copied from MDN:
+	 * https://developer.mozilla.org/en-US/docs/Web/API/Element/classList
+	 */
+
+	if ("document" in window.self) {
+
+	  // Full polyfill for browsers with no classList support
+	  // Including IE < Edge missing SVGElement.classList
+	  if (!("classList" in document.createElement("_"))
+	    || document.createElementNS && !("classList" in document.createElementNS("http://www.w3.org/2000/svg","g"))) {
+
+	  (function (view) {
+
+	    "use strict";
+
+	    if (!('Element' in view)) return;
+
+	    var
+	        classListProp = "classList"
+	      , protoProp = "prototype"
+	      , elemCtrProto = view.Element[protoProp]
+	      , objCtr = Object
+	      , strTrim = String[protoProp].trim || function () {
+	        return this.replace(/^\s+|\s+$/g, "");
+	      }
+	      , arrIndexOf = Array[protoProp].indexOf || function (item) {
+	        var
+	            i = 0
+	          , len = this.length
+	        ;
+	        for (; i < len; i++) {
+	          if (i in this && this[i] === item) {
+	            return i;
+	          }
+	        }
+	        return -1;
+	      }
+	      // Vendors: please allow content code to instantiate DOMExceptions
+	      , DOMEx = function (type, message) {
+	        this.name = type;
+	        this.code = DOMException[type];
+	        this.message = message;
+	      }
+	      , checkTokenAndGetIndex = function (classList, token) {
+	        if (token === "") {
+	          throw new DOMEx(
+	              "SYNTAX_ERR"
+	            , "An invalid or illegal string was specified"
+	          );
+	        }
+	        if (/\s/.test(token)) {
+	          throw new DOMEx(
+	              "INVALID_CHARACTER_ERR"
+	            , "String contains an invalid character"
+	          );
+	        }
+	        return arrIndexOf.call(classList, token);
+	      }
+	      , ClassList = function (elem) {
+	        var
+	            trimmedClasses = strTrim.call(elem.getAttribute("class") || "")
+	          , classes = trimmedClasses ? trimmedClasses.split(/\s+/) : []
+	          , i = 0
+	          , len = classes.length
+	        ;
+	        for (; i < len; i++) {
+	          this.push(classes[i]);
+	        }
+	        this._updateClassName = function () {
+	          elem.setAttribute("class", this.toString());
+	        };
+	      }
+	      , classListProto = ClassList[protoProp] = []
+	      , classListGetter = function () {
+	        return new ClassList(this);
+	      }
+	    ;
+	    // Most DOMException implementations don't allow calling DOMException's toString()
+	    // on non-DOMExceptions. Error's toString() is sufficient here.
+	    DOMEx[protoProp] = Error[protoProp];
+	    classListProto.item = function (i) {
+	      return this[i] || null;
+	    };
+	    classListProto.contains = function (token) {
+	      token += "";
+	      return checkTokenAndGetIndex(this, token) !== -1;
+	    };
+	    classListProto.add = function () {
+	      var
+	          tokens = arguments
+	        , i = 0
+	        , l = tokens.length
+	        , token
+	        , updated = false
+	      ;
+	      do {
+	        token = tokens[i] + "";
+	        if (checkTokenAndGetIndex(this, token) === -1) {
+	          this.push(token);
+	          updated = true;
+	        }
+	      }
+	      while (++i < l);
+
+	      if (updated) {
+	        this._updateClassName();
+	      }
+	    };
+	    classListProto.remove = function () {
+	      var
+	          tokens = arguments
+	        , i = 0
+	        , l = tokens.length
+	        , token
+	        , updated = false
+	        , index
+	      ;
+	      do {
+	        token = tokens[i] + "";
+	        index = checkTokenAndGetIndex(this, token);
+	        while (index !== -1) {
+	          this.splice(index, 1);
+	          updated = true;
+	          index = checkTokenAndGetIndex(this, token);
+	        }
+	      }
+	      while (++i < l);
+
+	      if (updated) {
+	        this._updateClassName();
+	      }
+	    };
+	    classListProto.toggle = function (token, force) {
+	      token += "";
+
+	      var
+	          result = this.contains(token)
+	        , method = result ?
+	          force !== true && "remove"
+	        :
+	          force !== false && "add"
+	      ;
+
+	      if (method) {
+	        this[method](token);
+	      }
+
+	      if (force === true || force === false) {
+	        return force;
+	      } else {
+	        return !result;
+	      }
+	    };
+	    classListProto.toString = function () {
+	      return this.join(" ");
+	    };
+
+	    if (objCtr.defineProperty) {
+	      var classListPropDesc = {
+	          get: classListGetter
+	        , enumerable: true
+	        , configurable: true
+	      };
+	      try {
+	        objCtr.defineProperty(elemCtrProto, classListProp, classListPropDesc);
+	      } catch (ex) { // IE 8 doesn't support enumerable:true
+	        if (ex.number === -0x7FF5EC54) {
+	          classListPropDesc.enumerable = false;
+	          objCtr.defineProperty(elemCtrProto, classListProp, classListPropDesc);
+	        }
+	      }
+	    } else if (objCtr[protoProp].__defineGetter__) {
+	      elemCtrProto.__defineGetter__(classListProp, classListGetter);
+	    }
+
+	    }(window.self));
+
+	    } else {
+	    // There is full or partial native classList support, so just check if we need
+	    // to normalize the add/remove and toggle APIs.
+
+	    (function () {
+	      "use strict";
+
+	      var testElement = document.createElement("_");
+
+	      testElement.classList.add("c1", "c2");
+
+	      // Polyfill for IE 10/11 and Firefox <26, where classList.add and
+	      // classList.remove exist but support only one argument at a time.
+	      if (!testElement.classList.contains("c2")) {
+	        var createMethod = function(method) {
+	          var original = DOMTokenList.prototype[method];
+
+	          DOMTokenList.prototype[method] = function(token) {
+	            var i, len = arguments.length;
+
+	            for (i = 0; i < len; i++) {
+	              token = arguments[i];
+	              original.call(this, token);
+	            }
+	          };
+	        };
+	        createMethod('add');
+	        createMethod('remove');
+	      }
+
+	      testElement.classList.toggle("c3", false);
+
+	      // Polyfill for IE 10 and Firefox <24, where classList.toggle does not
+	      // support the second argument.
+	      if (testElement.classList.contains("c3")) {
+	        var _toggle = DOMTokenList.prototype.toggle;
+
+	        DOMTokenList.prototype.toggle = function(token, force) {
+	          if (1 in arguments && !this.contains(token) === !force) {
+	            return force;
+	          } else {
+	            return _toggle.call(this, token);
+	          }
+	        };
+
+	      }
+
+	      testElement = null;
+	    }());
+	  }
+	}
 
 
 /***/ }
