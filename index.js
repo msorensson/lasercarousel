@@ -17,8 +17,11 @@ function LaserCarousel(el, opts) {
         currentItemSpacing: 1,
         touch: true,
         speed: 300,
-        dots: true
+        dots: true,
+        arrows: true
     };
+
+    console.log(opts);
 
     assign(self.opts, opts);
 
@@ -104,6 +107,26 @@ LaserCarousel.prototype = {
         }
 
         self.carouselNavigation.innerHTML = html;
+    },
+
+    addArrows: function() {
+        var self = this,
+            html = '';
+
+        self.arrowLeft = document.createElement('button');
+        self.arrowRight = document.createElement('button');
+
+        self.arrowLeft.classList.add(self.opts.namespace + 'carousel__arrow');
+        self.arrowLeft.classList.add(self.opts.namespace + 'carousel__arrow--left');
+
+        self.arrowRight.classList.add(self.opts.namespace + 'carousel__arrow');
+        self.arrowRight.classList.add(self.opts.namespace + 'carousel__arrow--right');
+
+        self.el.appendChild(self.arrowLeft);
+        self.el.appendChild(self.arrowRight);
+
+        self.arrowLeft.addEventListener('click', self.previous.bind(this));
+        self.arrowRight.addEventListener('click', self.next.bind(this));
     },
 
     setCurrent: function(idx) {
@@ -261,6 +284,10 @@ LaserCarousel.prototype = {
 
         if (self.opts.dots) {
             self.addDots();
+        }
+
+        if (self.opts.arrows) {
+            self.addArrows();
         }
 
         if (self.opts.touch) {
