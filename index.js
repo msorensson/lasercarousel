@@ -21,8 +21,6 @@ function LaserCarousel(el, opts) {
         arrows: true
     };
 
-    console.log(opts);
-
     assign(self.opts, opts);
 
     self.currentItemIdx = self.opts.initialSlide;
