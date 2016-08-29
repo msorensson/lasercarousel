@@ -1,4 +1,8 @@
 'use strict';
+function preventClickEventOnRelease(e) {
+    e.preventDefault();
+}
+
 module.exports = function() {
     var self = this,
         pressed = false,
@@ -40,6 +44,12 @@ module.exports = function() {
     function release(e) {
         var direction = getDirection(startX, self.currentX),
             distance = getDistance(startX, self.currentX);
+
+        self.el.removeEventListener('click', preventClickEventOnRelease);
+
+        if (Math.abs(startX - self.currentX) > 30) {
+            self.el.addEventListener('click', preventClickEventOnRelease);
+        }
 
         if (!pressed) {
             return;
