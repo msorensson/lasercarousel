@@ -18,7 +18,8 @@ function LaserCarousel(el, opts) {
         touch: true,
         speed: 300,
         dots: true,
-        arrows: true
+        arrows: true,
+        asForDots: false,
     };
 
     assign(self.opts, opts);
@@ -208,7 +209,7 @@ LaserCarousel.prototype = {
 
     attachNavigationHandler: function() {
         var self = this;
-        var items = self.el.getElementsByClassName(self.opts.namespace + 'carousel__navigation-item');
+        var items = (self.opts.asForDots) ? self.opts.asForDots : self.el.getElementsByClassName(self.opts.namespace + 'carousel__navigation-item');
 
         var attachClickHandler = function(el, idx) {
             el.addEventListener('click', function(e) {
@@ -280,7 +281,7 @@ LaserCarousel.prototype = {
 
         window.addEventListener('resize', debounce(self.start.bind(self), 300));
 
-        if (self.opts.dots) {
+        if (self.opts.dots && !self.opts.asForDots) {
             self.addDots();
         }
 
