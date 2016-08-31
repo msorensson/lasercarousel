@@ -133,6 +133,11 @@ module.exports = function() {
     function scroll(delta) {
         self.currentX = self.currentX + delta;
 
+        if (self.currentX > self.el.offsetWidth / 3) {
+            self.currentX = self.el.offsetWidth / 3;
+        } else if (self.currentX < -Math.abs(self.trackWidth)) {
+            self.currentX = -Math.abs(self.trackWidth);
+        }
     }
 
     self.el.addEventListener('mousedown', tap);
