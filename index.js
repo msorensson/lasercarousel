@@ -64,7 +64,7 @@ LaserCarousel.prototype = {
     panToCurrent: function() {
         var self = this,
             idx = self.currentItemIdx,
-            itemWidth = self.el.offsetWidth;
+            itemWidth = self.items[0].el.offsetWidth;
 
         self.currentX = -idx * itemWidth;
         self.track.style.transform = 'translate3d(' + self.currentX + 'px, 0 ,0)';
