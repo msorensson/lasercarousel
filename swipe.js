@@ -91,7 +91,7 @@ module.exports = function() {
     }
 
     function getDirection(start, current) {
-        return (Math.abs(start) - Math.abs(current) > 0) ? 'left' : 'right';
+        return (start < current) ? 'left' : 'right';
     }
 
     function getPositionX(e) {
