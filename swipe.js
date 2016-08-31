@@ -46,9 +46,12 @@ module.exports = function() {
             if (deltaX > threshold || deltaX < -threshold) {
                 lastX = x;
                 scroll(-deltaX);
+
                 e.preventDefault();
             }
         }
+
+        e.preventDefault();
     }
 
     function release(e) {
