@@ -58,6 +58,8 @@ module.exports = function() {
         var direction = getDirection(startX, self.currentX),
             distance = getDistance(startX, self.currentX);
 
+        var targetItemIdx = self.currentItemIdx;
+
         self.el.removeEventListener('click', preventClickEventOnRelease);
 
         if (Math.abs(startX - self.currentX) > 30) {
@@ -68,22 +70,40 @@ module.exports = function() {
             return;
         }
 
-        pressed = false;
+        // Get item most in view.
+        while(distance > 0) {
+            if (distance > self.el.offsetWidth) {
+                distance = distance - self.el.offsetWidth;
+            }
+
+            if (distance > self.el.offsetWidth) {
+                if (direction === 'right') {
+                    targetItemIdx++;
+                } else {
+                    targetItemIdx--;
+                }
+            } else {
+                break;
+            }
+        }
+
+        if (distance > self.el.offsetWidth / 4) {
+            if (direction === 'right') {
+                targetItemIdx++;
+            } else {
+                targetItemIdx--;
+            }
+        }
+
+        targetItemIdx = Math.min(Math.max(targetItemIdx, 0), self.items.length - 1);
+        self.goto(targetItemIdx);
+
         setTimeout(function() {
             self.dragging = false;
         }, 300);
 
         self.applyTrackTransition();
-
-        if (distance > self.el.offsetWidth / 4) {
-            if (direction === 'right') {
-                self.next();
-            } else {
-                self.previous();
-            }
-        } else {
-            self.goto(self.currentItemIdx);
-        }
+        pressed = false;
     }
 
     function getDistance(start, current) {
