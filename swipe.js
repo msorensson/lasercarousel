@@ -11,11 +11,21 @@ module.exports = function() {
         lastX = 0,
         threshold = 4;
 
+    function loop() {
+        if (pressed) {
+            requestAnimationFrame(loop);
+        }
+
+        self.track.style.transform = 'translate3d(' + self.currentX + 'px, 0, 0)';
+    }
+
     function tap(e) {
         pressed = true;
         startX = self.currentX;
         lastX = getPositionX(e),
         lastY = getPositionY(e);
+
+        requestAnimationFrame(loop);
 
         self.track.style.transitionProperty = 'none';
     }
@@ -100,7 +110,6 @@ module.exports = function() {
     function scroll(delta) {
         self.currentX = self.currentX + delta;
 
-        self.track.style.transform = 'translate3d(' + self.currentX + 'px, 0, 0)';
     }
 
     self.el.addEventListener('mousedown', tap);
