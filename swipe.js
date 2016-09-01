@@ -50,8 +50,6 @@ module.exports = function() {
                 e.preventDefault();
             }
         }
-
-        e.preventDefault();
     }
 
     function release(e) {
