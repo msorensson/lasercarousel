@@ -26,7 +26,6 @@ module.exports = function() {
         lastY = getPositionY(e);
 
         requestAnimationFrame(loop);
-
         self.track.style.transitionProperty = 'none';
     }
 
@@ -138,11 +137,11 @@ module.exports = function() {
         }
     }
 
-    self.el.addEventListener('mousedown', tap);
-    self.el.addEventListener('mousemove', drag);
+    self.track.addEventListener('mousedown', tap);
+    self.track.addEventListener('mousemove', drag);
     document.addEventListener('mouseup', release);
 
-    self.el.addEventListener('touchstart', tap);
-    self.el.addEventListener('touchmove', drag);
+    self.track.addEventListener('touchstart', tap);
+    self.track.addEventListener('touchmove', drag);
     document.addEventListener('touchend', release);
 };
