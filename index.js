@@ -157,6 +157,21 @@ LaserCarousel.prototype = {
                 items[idx].classList.add(self.opts.namespace + 'carousel__navigation-item--current');
             }
         }
+
+        if (idx !== 0 || idx !== self.items.length - 1) {
+            self.el.parentNode.classList.remove('carousel--at-end');
+            self.el.parentNode.classList.remove('carousel--at-start');
+        }
+
+        if (idx === 0) {
+            self.el.parentNode.classList.remove('carousel--at-end');
+            self.el.parentNode.classList.add('carousel--at-start');
+        }
+
+        if (idx === self.items.length - 1) {
+            self.el.parentNode.classList.remove('carousel--at-start');
+            self.el.parentNode.classList.add('carousel--at-end');
+        }
     },
 
     positionItems: function() {
