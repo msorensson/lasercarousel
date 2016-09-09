@@ -64,7 +64,7 @@ LaserCarousel.prototype = {
     panToCurrent: function() {
         var self = this,
             idx = self.currentItemIdx,
-            itemWidth = self.items[0].el.offsetWidth;
+            itemWidth = self.items[0] && self.items[0].el.offsetWidth || 0;
 
         self.currentX = -idx * itemWidth;
         self.track.style.transform = 'translate3d(' + self.currentX + 'px, 0 ,0)';
@@ -137,7 +137,11 @@ LaserCarousel.prototype = {
             self.currentItem.classList.remove(self.opts.namespace + 'carousel__item--current');
         }
 
-        self.currentItem = self.items[idx].el;
+        self.currentItem = self.items[idx] && self.items[idx].el;
+
+        if (!self.items[idx]) {
+            return;
+        }
 
         if (self.currentItem) {
             self.currentItemIdx = idx;
