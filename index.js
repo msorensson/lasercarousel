@@ -102,7 +102,7 @@ LaserCarousel.prototype = {
         self.el.appendChild(self.carouselNavigation);
 
         for (var i = 0; i < self.items.length; i++) {
-            html += '<li class="' + self.opts.namespace + 'carousel__navigation-item"><a role="button" href="#" class="' + self.opts.namespace + 'carousel__navigation-button">' + (i + 1) + '</a></li>\n';
+            html += '<li class="' + self.opts.namespace + 'carousel__navigation-item"><button class="' + self.opts.namespace + 'carousel__navigation-button">' + (i + 1) + '</button></li>\n';
         }
 
         self.carouselNavigation.innerHTML = html;
