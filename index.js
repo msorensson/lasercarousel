@@ -97,6 +97,11 @@ LaserCarousel.prototype = {
         var self = this,
             html = '';
 
+        // Don't output single dot.
+        if (self.items.length === 1) {
+            return;
+        }
+
         self.carouselNavigation = document.createElement('ul');
         self.carouselNavigation.classList.add(self.opts.namespace + 'carousel__navigation');
         self.el.appendChild(self.carouselNavigation);
