@@ -207,8 +207,11 @@ LaserCarousel.prototype = {
     goto: function(idx) {
         var self = this;
         self.setCurrent(idx);
-        self.positionItems();
-        self.panToCurrent();
+
+        if (!self.opts.transition || self.opts.transition === 'slide') {
+            self.positionItems();
+            self.panToCurrent();
+        }
     },
 
     next: function() {
@@ -290,12 +293,17 @@ LaserCarousel.prototype = {
     start: function() {
         var self = this;
 
-        self.setTrackWidth();
         self.setCurrent(self.currentItemIdx);
-        self.positionItems();
 
-        self.panToCurrent();
-        self.applyTrackTransition();
+        if (!self.opts.transition || self.opts.transition === 'slide') {
+            self.setTrackWidth();
+            self.positionItems();
+        }
+
+        if (!self.opts.transition || self.opts.transition === 'slide') {
+            self.panToCurrent();
+            self.applyTrackTransition();
+        }
     },
 
     initialize: function() {
