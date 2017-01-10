@@ -19,7 +19,7 @@ function LaserCarousel(el, opts) {
         speed: 300,
         dots: true,
         arrows: true,
-        asForDots: false,
+        asForDots: false
     };
 
     assign(self.opts, opts);
