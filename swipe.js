@@ -9,7 +9,10 @@ module.exports = function() {
         lastY = 0,
         startX = 0,
         lastX = 0,
-        threshold = 4;
+        threshold = 4,
+        timer = 0,
+        intval,
+        snappyTime = 140;
 
     function loop() {
         if (pressed) {
@@ -24,6 +27,11 @@ module.exports = function() {
         startX = self.currentX;
         lastX = getPositionX(e),
         lastY = getPositionY(e);
+
+        timer = 0;
+        intval = setInterval(function() {
+            timer = timer + 20;
+        }, 20);
 
         requestAnimationFrame(loop);
         self.track.style.transitionProperty = 'none';
@@ -53,7 +61,9 @@ module.exports = function() {
 
     function release(e) {
         var direction = getDirection(startX, self.currentX),
-            distance = getDistance(startX, self.currentX);
+            distance = getDistance(startX, self.currentX),
+            itemWidth = self.items[0] && self.items[0].el.offsetWidth || 0,
+            itemsToGo = 1;
 
         var targetItemIdx = self.currentItemIdx;
 
@@ -67,32 +77,22 @@ module.exports = function() {
             return;
         }
 
-        // Get item most in view.
-        while(distance > 0) {
-            if (distance > self.el.offsetWidth) {
-                distance = distance - self.el.offsetWidth;
-            }
+        itemsToGo = Math.round(distance / itemWidth);
 
-            if (distance > self.el.offsetWidth) {
-                if (direction === 'right') {
-                    targetItemIdx++;
-                } else {
-                    targetItemIdx--;
-                }
-            } else {
-                break;
-            }
-        }
-
-        if (distance > self.el.offsetWidth / 4) {
+        if (timer < snappyTime) {
             if (direction === 'right') {
                 targetItemIdx++;
             } else {
                 targetItemIdx--;
             }
+        } else {
+            if (direction === 'right') {
+                targetItemIdx = targetItemIdx + itemsToGo;
+            } else {
+                targetItemIdx = targetItemIdx - itemsToGo;
+            }
         }
 
-        targetItemIdx = Math.min(Math.max(targetItemIdx, 0), self.items.length - 1);
         self.goto(targetItemIdx);
 
         setTimeout(function() {
@@ -101,6 +101,8 @@ module.exports = function() {
 
         self.applyTrackTransition();
         pressed = false;
+
+        clearInterval(intval);
     }
 
     function getDistance(start, current) {
