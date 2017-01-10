@@ -235,7 +235,8 @@ LaserCarousel.prototype = {
 
     attachNavigationHandler: function() {
         var self = this;
-        var items = (self.opts.asForDots) ? self.opts.asForDots : self.el.getElementsByClassName(self.opts.namespace + 'carousel__navigation-item');
+        var dots = (self.opts.asForDots) ? self.opts.asForDots : self.el.getElementsByClassName(self.opts.namespace + 'carousel__navigation-item');
+        var i;
 
         var attachClickHandler = function(el, idx) {
             el.addEventListener('click', function(e) {
@@ -247,10 +248,14 @@ LaserCarousel.prototype = {
             });
         };
 
-        for (var i = 0; i < items.length; i++) {
-            attachClickHandler(items[i], i);
+        if (self.opts.dots) {
+            for (i = 0; i < dots.length; i++) {
+                attachClickHandler(dots[i], i);
+            }
+        }
 
-            if (self.opts.itemNavigation) {
+        if (self.opts.itemNavigation) {
+            for (i = 0; i < self.items.length; i++) {
                 attachClickHandler(self.items[i].el, i);
             }
         }
