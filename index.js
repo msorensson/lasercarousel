@@ -50,8 +50,7 @@ LaserCarousel.prototype = {
 
         for (i; i >= 0; i--) {
             self.items[i] = {};
-            self.items[i].el = items[i].cloneNode(true);
-            self.el.removeChild(items[i]);
+            self.items[i].el = items[i];
         }
     },
 
