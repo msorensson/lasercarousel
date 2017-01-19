@@ -205,6 +205,8 @@ LaserCarousel.prototype = {
 
     goto: function(idx) {
         var self = this;
+        idx = Math.min(Math.max(idx, 0), self.items.length - 1);
+
         self.setCurrent(idx);
 
         if (!self.opts.transition || self.opts.transition === 'slide') {
