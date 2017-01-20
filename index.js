@@ -19,7 +19,8 @@ function LaserCarousel(el, opts) {
         speed: 300,
         dots: true,
         arrows: true,
-        asForDots: false
+        asForDots: false,
+        after: function() {}
     };
 
     assign(self.opts, opts);
@@ -180,6 +181,8 @@ LaserCarousel.prototype = {
             self.el.parentNode.classList.remove('carousel--at-start');
             self.el.parentNode.classList.add('carousel--at-end');
         }
+
+        self.opts.after.call(self, idx);
     },
 
     positionItems: function() {
@@ -205,6 +208,10 @@ LaserCarousel.prototype = {
 
     goto: function(idx) {
         var self = this;
+        if (idx === self.currentItemIdx) {
+            return;
+        }
+
         idx = Math.min(Math.max(idx, 0), self.items.length - 1);
 
         self.setCurrent(idx);

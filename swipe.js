@@ -60,10 +60,14 @@ module.exports = function() {
     }
 
     function release(e) {
-        var direction = getDirection(startX, self.currentX),
+        var direction = false,
             distance = getDistance(startX, self.currentX),
             itemWidth = self.items[0] && self.items[0].el.offsetWidth || 0,
             itemsToGo = 1;
+
+        if (startX !== self.currentX) {
+            direction = getDirection(startX, self.currentX);
+        }
 
         var targetItemIdx = self.currentItemIdx;
 
@@ -82,13 +86,13 @@ module.exports = function() {
         if (timer < snappyTime) {
             if (direction === 'right') {
                 targetItemIdx++;
-            } else {
+            } else if (direction === 'left') {
                 targetItemIdx--;
             }
         } else {
             if (direction === 'right') {
                 targetItemIdx = targetItemIdx + itemsToGo;
-            } else {
+            } else if (direction === 'left') {
                 targetItemIdx = targetItemIdx - itemsToGo;
             }
         }
