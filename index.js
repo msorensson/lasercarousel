@@ -167,6 +167,24 @@ LaserCarousel.prototype = {
             }
         }
 
+        if (self.opts.asForDots) {
+            for (var i = 0; i < self.opts.asForDots.length; i++) {
+                if (self.opts.asForDots[i].classList.contains('current')) {
+                    current = self.opts.asForDots[i];
+                }
+            }
+
+            if (current) {
+                current.classList.remove(self.opts.namespace + 'current');
+            }
+
+            items = self.opts.asForDots;
+
+            if (items[idx]) {
+                items[idx].classList.add(self.opts.namespace + 'current');
+            }
+        }
+
         if (idx !== 0 || idx !== self.items.length - 1) {
             self.el.parentNode.classList.remove('carousel--at-end');
             self.el.parentNode.classList.remove('carousel--at-start');
